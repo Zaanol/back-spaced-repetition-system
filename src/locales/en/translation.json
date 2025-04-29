@@ -1,0 +1,11 @@
+{
+  "welcome": "Welcome to our application!",
+  "username.nonNull": "Username is required",
+  "email.nonNull": "Email is required",
+  "email.invalid": "Invalid email format",
+  "password.nonNull": "Password is required",
+  "error": {
+    "not_found": "Object not found",
+    "internal_server_error": "Internal Server Error"
+  }
+}

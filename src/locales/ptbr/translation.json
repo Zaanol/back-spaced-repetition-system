@@ -1,0 +1,11 @@
+{
+  "welcome": "Seja bem vindo a aplicacao!",
+  "username.nonNull": "O nome do usuario deve ser informado",
+  "email.nonNull": "O email deve ser informado",
+  "email.invalid": "O email deve ser valido",
+  "password.nonNull": "A senha deve ser informada",
+  "error": {
+    "not_found": "Objeto não encontrado",
+    "internal_server_error": "Erro interno no serviço"
+  }
+}

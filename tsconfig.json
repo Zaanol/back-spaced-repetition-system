@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Commonjs",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "checkJs": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": [
+      "es6"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": true,
+    "useUnknownInCatchVariables": false,
+    "baseUrl": "./",
+    "paths": {
+      "@mocks/*": ["tests/utils/mocks/*"]
+    }
+},
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+      "<node_internals>/**"
+  ]
+}
