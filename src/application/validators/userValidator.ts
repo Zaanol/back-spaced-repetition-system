@@ -1,5 +1,6 @@
 import { UserDTO } from '../dtos/userDTO';
 import { LoginDTO } from "../dtos/loginDTO";
+import { isEmpty, isValidEmail } from "./utils/utilsValidator";
 
 //TODO This code must to be improved
 export const validateUser = (user: UserDTO): string | null => {
@@ -40,12 +41,4 @@ export const validateLogin = (login: LoginDTO): string | null => {
     }
 
     return null;
-};
-
-const isEmpty = (text: string): boolean => {
-    return !text || text.trim() === '';
-}
-
-const isValidEmail = (email: string): boolean => {
-    return /\S+@\S+\.\S+/.test(email);
 };

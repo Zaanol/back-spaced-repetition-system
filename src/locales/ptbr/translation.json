@@ -1,9 +1,11 @@
 {
-  "welcome": "Seja bem vindo a aplicacao!",
+  "id.nonNull": "O ID deve ser informado",
   "username.nonNull": "O nome do usuario deve ser informado",
   "email.nonNull": "O email deve ser informado",
   "email.invalid": "O email deve ser valido",
   "password.nonNull": "A senha deve ser informada",
+  "deck.name.nonNull": "O nome do baralho deve ser informado",
+  "deck.notFound": "Baralho nao encontrado",
   "error": {
     "not_found": "Objeto não encontrado",
     "internal_server_error": "Erro interno no serviço"

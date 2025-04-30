@@ -1,9 +1,11 @@
 {
-  "welcome": "Welcome to our application!",
+  "id.nonNull": "ID is required",
   "username.nonNull": "Username is required",
   "email.nonNull": "Email is required",
   "email.invalid": "Invalid email format",
   "password.nonNull": "Password is required",
+  "deck.name.nonNull": "Deck name is required",
+  "deck.notFound": "Deck not found",
   "error": {
     "not_found": "Object not found",
     "internal_server_error": "Internal Server Error"
