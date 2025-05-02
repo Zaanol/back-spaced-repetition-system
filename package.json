@@ -24,6 +24,7 @@
     "i18next-http-middleware": "^3.7.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.0",
+    "multer": "^1.4.5-lts.2",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.97",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.15.3",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
