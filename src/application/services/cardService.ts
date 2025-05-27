@@ -4,7 +4,7 @@ import { Card } from "../../domain/models/card";
 import { validateCard } from "../validators/cardValidator";
 import i18n from "../../config/i18n";
 import mongoose, { FilterQuery } from "mongoose";
-import {gridFSBucket, StoredMediaResult, storeMedia} from "../../infrastructure/storages/storage";
+import { gridFSBucket, StoredMediaResult, storeMedia } from "../../infrastructure/storages/storage";
 import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
 import { MediaBlock } from "../../domain/models/mediaBlock";
 
@@ -103,7 +103,7 @@ export class CardService {
 
             if (block.data) {
                 //TODO Rever conversao para base64
-                processedBlock.data = (block.data as any).toString("base64");
+                //processedBlock.data = (block.data as any).toString("base64");
                 return processedBlock;
             }
 
@@ -119,7 +119,7 @@ export class CardService {
                 });
 
                 //TODO Rever conversao para base64
-                processedBlock.data = Buffer.concat(chunks).toString("base64");
+                //processedBlock.data = Buffer.concat(chunks).toString("base64");
                 return processedBlock;
             }
 
