@@ -1,24 +1,26 @@
 import { CardRepository } from "../../infrastructure/repositories/cardRepository";
-import { CardDTO, MediaBlockDTO } from "../dtos/cardDTO";
+import { CardDTO, CardWithMediaBlocksDTO } from "../dtos/cardDTO";
 import { Card } from "../../domain/models/card";
 import { validateCard } from "../validators/cardValidator";
 import i18n from "../../config/i18n";
-import mongoose, { FilterQuery } from "mongoose";
-import { gridFSBucket, StoredMediaResult, storeMedia } from "../../infrastructure/storages/storage";
+import { FilterQuery } from "mongoose";
 import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
-import { MediaBlock } from "../../domain/models/mediaBlock";
+import { MediaService } from "./mediaService";
+import { MediaReducedDTO } from "../dtos/mediaDTO";
 
 //TODO Implement translations
 export class CardService {
     private cardRepository: CardRepository;
     private deckRepository: DeckRepository;
+    private mediaService: MediaService;
 
-    constructor(cardRepository: CardRepository, deckRepository: DeckRepository) {
+    constructor(cardRepository: CardRepository, deckRepository: DeckRepository, mediaService: MediaService) {
         this.cardRepository = cardRepository;
         this.deckRepository = deckRepository;
+        this.mediaService = mediaService;
     }
 
-    public async create(cardDTO: CardDTO, files: { [fieldname: string]: Express.Multer.File[] }): Promise<Card> {
+    public async create(cardDTO: CardWithMediaBlocksDTO, files: { [fieldname: string]: Express.Multer.File[] }): Promise<Card> {
         const validationError = validateCard(cardDTO);
         if (validationError) {
             throw new Error(i18n.t(validationError));
@@ -30,33 +32,19 @@ export class CardService {
             throw new Error(i18n.t("deck.notFound"));
         }
 
-        const processMediaBlocks = async (blocks: MediaBlockDTO[]) => {
-            return Promise.all(blocks.map(async (block) => {
-                if (block.type === "text") return block;
+        const processMediaBlocks = async (blocks: MediaReducedDTO[]) => {
+            const createdBlocks = await this.mediaService.create(blocks, files);
 
-                const file = files[block.fileFieldName!]?.[0];
-                if (!file) {
-                    throw new Error(i18n.t("card.missingFile", { field: block.fileFieldName }));
-                }
-
-                const storageResult: StoredMediaResult = await storeMedia(file);
-
-                return {
-                    type: block.type,
-                    ...storageResult,
-                    contentType: file.mimetype,
-                    size: file.size
-                };
-            }));
+            return createdBlocks.map(block => block.id);
         };
 
-        const processedCard = {
-            ...cardDTO,
+        const card: CardDTO = {
+            deckId: cardDTO.deckId,
             front: await processMediaBlocks(cardDTO.front),
-            back: await processMediaBlocks(cardDTO.back)
+            back: await processMediaBlocks(cardDTO.back),
         };
 
-        return await this.cardRepository.createCard(processedCard);
+        return await this.cardRepository.createCard(card);
     }
 
     public async getById(id: string): Promise<Card | null> {
@@ -64,14 +52,7 @@ export class CardService {
             throw new Error(i18n.t("id.nonNull"));
         }
         
-        const card = await this.cardRepository.findCardById(id);
-        if (!card) 
-            return null;
-
-        card.front = await this.processMediaBlocks(card.front);
-        card.back = await this.processMediaBlocks(card.back);
-
-        return card;
+        return await this.cardRepository.findCardById(id);
     }
 
     public async getAll(filters: FilterQuery<Card> = {}): Promise<Card[]> {
@@ -90,40 +71,5 @@ export class CardService {
             throw new Error(i18n.t("id.nonNull"));
         }
         return await this.cardRepository.deleteCard(id);
-    }
-
-    private async processMediaBlocks(blocks: MediaBlock[]): Promise<MediaBlock[]> {
-        return Promise.all(blocks.map(async (block) => {
-            if (block.type === "text") return block;
-
-            const processedBlock: MediaBlock = {
-                type: block.type,
-                contentType: block.contentType
-            };
-
-            if (block.data) {
-                //TODO Rever conversao para base64
-                //processedBlock.data = (block.data as any).toString("base64");
-                return processedBlock;
-            }
-
-            if (block.gridFsId) {
-                const gridFsId = new mongoose.Types.ObjectId(block.gridFsId);
-                const chunks: Buffer[] = [];
-
-                const downloadStream = gridFSBucket.openDownloadStream(gridFsId);
-                await new Promise((resolve, reject) => {
-                    downloadStream.on("data", (chunk) => chunks.push(chunk));
-                    downloadStream.on("end", resolve);
-                    downloadStream.on("error", reject);
-                });
-
-                //TODO Rever conversao para base64
-                //processedBlock.data = Buffer.concat(chunks).toString("base64");
-                return processedBlock;
-            }
-
-            throw new Error(i18n.t("card.malformedMediaBlock"));
-        }));
     }
 }

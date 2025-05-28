@@ -1,12 +1,17 @@
 import express from "express";
 import { CardController } from "../controllers/cardController";
 import { CardService } from "../../../application/services/cardService";
+import { MediaService } from "../../../application/services/mediaService";
 import cardRepository from "../../../infrastructure/repositories/cardRepository";
 import deckRepository from "../../../infrastructure/repositories/deckRepository";
+import mediaRepository from "../../../infrastructure/repositories/mediaRepository";
 
 const router = express.Router();
 
-const cardController = new CardController(new CardService(cardRepository, deckRepository));
+const mediaService: MediaService = new MediaService(mediaRepository);
+const cardService: CardService = new CardService(cardRepository, deckRepository, mediaService);
+
+const cardController = new CardController(cardService);
 
 router.post("/create", cardController.uploadMiddleware, cardController.create);
 router.get("/getById/:id", cardController.getById);

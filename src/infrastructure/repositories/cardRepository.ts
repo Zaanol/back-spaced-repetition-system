@@ -23,8 +23,8 @@ export class CardRepository implements ICardRepository {
         const newCard = new this.cardModel({
             id: uuidv4(),
             deckId: cardDTO.deckId,
-            front: cardDTO.front,
-            back: cardDTO.back
+            frontMediaIds: cardDTO.front,
+            backMediaIds: cardDTO.back
         });
 
         return await newCard.save();

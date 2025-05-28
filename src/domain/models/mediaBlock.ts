@@ -1,15 +1,26 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 export interface MediaBlock {
-    type: "text" | "image" | "audio";
+    id: string;
+    type: MediaBlockType;
     text?: string;
-    data?: string;
-    gridFsId?: string;
+    data?: Buffer;
+    gridFsId?: mongoose.Types.ObjectId;
     contentType?: string;
     size?: number;
 }
 
+export type MediaBlockType = "text" | "image" | "audio";
+
 export const mediaBlockSchema = new Schema<MediaBlock>({
+    id: {
+        type: String,
+        default: uuidv4,
+        unique: true,
+        required: true,
+        index: true
+    },
     type: {
         type: String,
         enum: ["text", "image", "audio"],

@@ -1,12 +1,13 @@
-export interface MediaBlockDTO {
-    type: "text" | "image" | "audio";
-    text?: string;
-    fileFieldName?: string;
-    contentType?: string;
-}
+import { MediaReducedDTO } from "./mediaDTO";
 
 export interface CardDTO {
     deckId: string;
-    front: MediaBlockDTO[];
-    back: MediaBlockDTO[];
+    front: String[];
+    back: String[];
+}
+
+export interface CardWithMediaBlocksDTO {
+    deckId: string;
+    front: MediaReducedDTO[];
+    back: MediaReducedDTO[];
 }
