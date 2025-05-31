@@ -43,7 +43,9 @@ export class CardController {
     }
 
     public async getAll(req: Request, res: Response, _next: NextFunction): Promise<void> {
-        const cards = await this.cardService.getAll(req.query);
+        const { filters, pagination } = req;
+
+        const cards = await this.cardService.getAll(filters, pagination?.page, pagination?.limit);
         res.json(cards);
     }
 

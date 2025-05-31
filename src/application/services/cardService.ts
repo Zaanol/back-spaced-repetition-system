@@ -7,6 +7,7 @@ import { FilterQuery } from "mongoose";
 import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
 import { MediaService } from "./mediaService";
 import { MediaReducedDTO } from "../dtos/mediaDTO";
+import {PaginatedResult} from "../../infrastructure/repositories/baseRepository";
 
 //TODO Implement translations
 export class CardService {
@@ -54,9 +55,16 @@ export class CardService {
         
         return await this.cardRepository.findCardById(id);
     }
-
-    public async getAll(filters: FilterQuery<Card> = {}): Promise<Card[]> {
-        return await this.cardRepository.findAllCards(filters);
+    
+    public async getAll(
+        filters: FilterQuery<Card> = {},
+        page: number = 1,
+        limit: number = 10
+    ): Promise<PaginatedResult<Card>> {
+        return await this.cardRepository.findAllPaginated(
+            filters,
+            { page, pageSize: limit }
+        );
     }
 
     public async update(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {

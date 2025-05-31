@@ -1,21 +1,23 @@
-import { Model, FilterQuery } from "mongoose";
+import { Model } from "mongoose";
 import { Card } from "../../domain/models/card";
 import cardModel from "../../domain/models/card";
 import { CardDTO } from "../../application/dtos/cardDTO";
 import { v4 as uuidv4 } from "uuid";
+import {BaseRepository, IBaseRepository} from "./baseRepository";
 
-export interface ICardRepository {
+export interface ICardRepository extends IBaseRepository<Card>{
     createCard(card: CardDTO): Promise<Card>;
     findCardById(id: string): Promise<Card | null>;
-    findAllCards(filters: FilterQuery<Card>): Promise<Card[]>;
     updateCard(id: string, card: Partial<CardDTO>): Promise<Card | null>;
     deleteCard(id: string): Promise<boolean>;
 }
 
-export class CardRepository implements ICardRepository {
+export class CardRepository extends BaseRepository<Card> implements ICardRepository {
     private readonly cardModel: Model<Card>;
 
     constructor(cardModel: Model<Card>) {
+        super(cardModel);
+
         this.cardModel = cardModel;
     }
 
@@ -32,10 +34,6 @@ export class CardRepository implements ICardRepository {
 
     public async findCardById(id: string): Promise<Card | null> {
         return await this.cardModel.findOne({ id }).exec();
-    }
-
-    public async findAllCards(filters: FilterQuery<Card>): Promise<Card[]> {
-        return await this.cardModel.find(filters).exec();
     }
 
     public async updateCard(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {

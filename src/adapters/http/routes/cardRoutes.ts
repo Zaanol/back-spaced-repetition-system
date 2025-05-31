@@ -5,6 +5,7 @@ import { MediaService } from "../../../application/services/mediaService";
 import cardRepository from "../../../infrastructure/repositories/cardRepository";
 import deckRepository from "../../../infrastructure/repositories/deckRepository";
 import mediaRepository from "../../../infrastructure/repositories/mediaRepository";
+import { paginationMiddleware } from "../middlewares/paginationMiddleware";
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const cardController = new CardController(cardService);
 
 router.post("/create", cardController.uploadMiddleware, cardController.create);
 router.get("/getById/:id", cardController.getById);
-router.get("/getAll", cardController.getAll);
+router.get("/getAll", paginationMiddleware, cardController.getAll);
 router.patch("/update/:id", cardController.update);
 router.delete("/delete/:id", cardController.delete);
 

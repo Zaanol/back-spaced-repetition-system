@@ -1,17 +1,17 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../../../infrastructure/security/jwt';
+import express, { Request, Response, NextFunction } from "express";
+import { verifyToken } from "../../../infrastructure/security/jwt";
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
-    const publicRoutes = ['/users/register', '/users/login'];
+    const publicRoutes = ["/users/register", "/users/login"];
 
     if (publicRoutes.includes(req.path)) {
         return next();
     }
 
     if (authHeader) {
-        const token = authHeader.split(' ')[1];
+        const token = authHeader.split(" ")[1];
         
         verifyToken(token).then(
             (decoded) =>  {
@@ -20,11 +20,11 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
                 next();
             },
             () => {
-                return res.status(401).json({ error: 'Unauthorized' })
+                return res.status(401).json({ error: "Unauthorized" })
             }
         );
     } else {
-        res.status(401).json({ error: 'Unauthorized' });
+        res.status(401).json({ error: "Unauthorized" });
     }
 };
 
