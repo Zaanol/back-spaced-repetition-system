@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response} from 'express';
-import { DeckService } from '../../../application/services/deckService';
-import { catchAsync } from './utils/utilsController';
-import i18n from '../../../config/i18n';
+import { NextFunction, Request, Response} from "express";
+import { DeckService } from "../../../application/services/deckService";
+import { catchAsync } from "./utils/utilsController";
+import i18n from "../../../config/i18n";
 
 export class DeckController {
     private deckService: DeckService;
@@ -27,7 +27,7 @@ export class DeckController {
 
         //TODO Transfer validation to repository
         if (!deck) {
-            res.status(404).json({ error: i18n.t('deck.notFound') });
+            res.status(404).json({ error: i18n.t("deck.notFound") });
             return;
         }
 
@@ -35,11 +35,13 @@ export class DeckController {
     }
 
     public async getAll(req: Request, res: Response, _next: NextFunction): Promise<void> {
-        const { name, description } = req.query;
+        const { filters, pagination } = req;
 
         const decks = await this.deckService.getAll(
-            name?.toString(),
-            description?.toString()
+            filters?.name?.toString(),
+            filters?.description?.toString(),
+            pagination?.page,
+            pagination?.limit
         );
 
         res.json(decks);

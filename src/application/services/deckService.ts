@@ -1,9 +1,10 @@
-import { DeckRepository } from '../../infrastructure/repositories/deckRepository';
-import { DeckDTO } from '../dtos/deckDTO';
-import { Deck } from '../../domain/models/deck';
-import { validateDeck } from '../validators/deckValidator';
-import i18n from '../../config/i18n';
+import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
+import { DeckDTO } from "../dtos/deckDTO";
+import { Deck } from "../../domain/models/deck";
+import { validateDeck } from "../validators/deckValidator";
+import i18n from "../../config/i18n";
 import { FilterQuery } from "mongoose";
+import { PaginatedResult } from "../../infrastructure/repositories/baseRepository";
 
 export class DeckService {
     private deckRepository: DeckRepository;
@@ -23,23 +24,31 @@ export class DeckService {
 
     public async getById(id: string): Promise<Deck | null> {
         if (!id) {
-            throw new Error(i18n.t('id.nonNull'));
+            throw new Error(i18n.t("id.nonNull"));
         }
 
         return await this.deckRepository.findDeckById(id);
     }
 
-    public async getAll(name?: string, description?: string): Promise<Deck[] | null> {
-        const filter: FilterQuery<Deck> = {};
+    public async getAll(
+        name?: string,
+        description?: string,
+        page: number = 1,
+        limit: number = 10
+    ): Promise<PaginatedResult<Deck>> {
+        const filters: FilterQuery<Deck> = {};
 
         if (name) {
-            filter.name = { $regex: name, $options: 'i' };
+            filters.name = { $regex: name, $options: "i" };
         }
 
         if (description) {
-            filter.description = { $regex: description, $options: 'i' };
+            filters.description = { $regex: description, $options: "i" };
         }
 
-        return await this.deckRepository.findAllDecks(filter);
+        return await this.deckRepository.findAllPaginated(
+            filters,
+            { page, pageSize: limit }
+        );
     }
 }

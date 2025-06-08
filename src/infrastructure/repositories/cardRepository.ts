@@ -5,7 +5,7 @@ import { CardDTO } from "../../application/dtos/cardDTO";
 import { v4 as uuidv4 } from "uuid";
 import {BaseRepository, IBaseRepository} from "./baseRepository";
 
-export interface ICardRepository extends IBaseRepository<Card>{
+export interface ICardRepository extends IBaseRepository<Card> {
     createCard(card: CardDTO): Promise<Card>;
     findCardById(id: string): Promise<Card | null>;
     updateCard(id: string, card: Partial<CardDTO>): Promise<Card | null>;
