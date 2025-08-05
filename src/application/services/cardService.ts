@@ -27,9 +27,7 @@ export class CardService {
             throw new Error(i18n.t(validationError));
         }
 
-        const deck = await this.deckRepository.findDeckById(cardDTO.deckId);
-
-        if (!deck) {
+        if (!await this.deckRepository.existsDeckById(cardDTO.deckId)) {
             throw new Error(i18n.t("deck.notFound"));
         }
 
@@ -42,7 +40,7 @@ export class CardService {
         const card: CardDTO = {
             deckId: cardDTO.deckId,
             front: await processMediaBlocks(cardDTO.front),
-            back: await processMediaBlocks(cardDTO.back),
+            back: await processMediaBlocks(cardDTO.back)
         };
 
         return await this.cardRepository.createCard(card);

@@ -8,6 +8,7 @@ import { BaseRepository, IBaseRepository } from "./baseRepository";
 export interface IDeckRepository extends IBaseRepository<Deck> {
     createDeck(_deck: DeckDTO): Promise<Deck>;
     findDeckById(_deckId: string): Promise<Deck | null>;
+    existsDeckById(_deckId: string): Promise<boolean>;
 }
 
 export class DeckRepository extends BaseRepository<Deck> implements IDeckRepository {
@@ -31,6 +32,11 @@ export class DeckRepository extends BaseRepository<Deck> implements IDeckReposit
 
     public async findDeckById(id: string): Promise<Deck | null> {
         return await this.deckModel.findOne({ id: id }).exec();
+    }
+
+    public async existsDeckById(id: string): Promise<boolean> {
+        const count = await this.deckModel.countDocuments({ id: id }).exec();
+        return count > 0;
     }
 }
 

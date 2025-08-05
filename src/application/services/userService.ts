@@ -29,7 +29,7 @@ export class UserService {
             return generateToken({ userId: user.id });
         }
 
-        throw new Error('Invalid email or password');
+        throw new Error("Invalid email or password");
     }
 
     public async create(userDTO: UserDTO): Promise<User> {

@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../../../infrastructure/security/jwt";
+import { AuthUser } from "../../../types/express";
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
@@ -15,7 +16,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
         
         verifyToken(token).then(
             (decoded) =>  {
-                (req as any).user = decoded
+                (req as any).user = decoded as AuthUser
 
                 next();
             },

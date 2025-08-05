@@ -1,3 +1,9 @@
+import { JwtPayload } from "jsonwebtoken";
+
+export interface AuthUser extends JwtPayload {
+    userId: string;
+}
+
 export {};
 
 declare global {
@@ -8,6 +14,7 @@ declare global {
                 page: number;
                 limit: number;
             };
+            user?: AuthUser;
         }
     }
 }

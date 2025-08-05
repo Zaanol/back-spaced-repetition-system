@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export interface MediaBlock {
     id: string;
+    userId: string;
     type: MediaBlockType;
     text?: string;
     data?: Buffer;
@@ -18,6 +19,12 @@ export const mediaBlockSchema = new Schema<MediaBlock>({
         type: String,
         default: uuidv4,
         unique: true,
+        required: true,
+        index: true
+    },
+    userId: {
+        type: String,
+        ref: "User",
         required: true,
         index: true
     },
