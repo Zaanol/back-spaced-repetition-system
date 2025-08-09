@@ -19,7 +19,6 @@ export class MediaRepository implements IMediaRepository {
     public async createMedia(mediaDTO: MediaDTO): Promise<MediaBlock> {
         const newMedia = new this.mediaBlockModel({
             id: uuidv4(),
-            userId: mediaDTO.userId,
             type: mediaDTO.type,
             text: mediaDTO.text,
             data: mediaDTO.data,

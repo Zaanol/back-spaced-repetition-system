@@ -15,7 +15,7 @@ export class SessionReviewController {
     }
 
     public async create(req: Request, res: Response, _next: NextFunction): Promise<void> {
-        const newSession = await this.sessionReviewService.create(req.body, req.user?.id);
+        const newSession = await this.sessionReviewService.create(req.body);
         res.status(201).json(newSession);
     }
 

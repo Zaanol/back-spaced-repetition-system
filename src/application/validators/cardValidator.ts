@@ -3,7 +3,6 @@ import { CardWithMediaBlocksDTO } from "../dtos/cardDTO";
 //TODO Create translations
 export const validateCard = (card: CardWithMediaBlocksDTO): string | null => {
     if (!card.deckId) return "card.deckRequired";
-    if (!card.userId) return "card.userRequired";
     if (card.front.length === 0) return "card.frontRequired";
     if (card.back.length === 0) return "card.backRequired";
 

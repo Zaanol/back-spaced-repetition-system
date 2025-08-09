@@ -22,7 +22,7 @@ const deckSchema = new Schema<Deck>({
     description: { type: String }
 });
 
-deckSchema.plugin(auditableWithOwnerPlugin)
+deckSchema.plugin(auditableWithOwnerPlugin);
 
 deckSchema.set("toJSON", {
     transform: (_doc, ret) => {

@@ -1,9 +1,9 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import { auditableWithOwnerPlugin, AuditableWithUser } from "../../infrastructure/db/plugins/auditableWithUserPlugin";
 
-export interface Card extends Document {
+export interface Card extends AuditableWithUser {
     id: string;
-    userId: string;
     deckId: string;
     frontMediaIds: String[];
     backMediaIds: String[];
@@ -14,8 +14,6 @@ export interface Card extends Document {
     lastReviewed: Date | null;
     learningStep: number;
     isLearning: boolean;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 const cardSchema = new Schema<Card>({
@@ -23,12 +21,6 @@ const cardSchema = new Schema<Card>({
         type: String,
         default: uuidv4,
         unique: true,
-        required: true,
-        index: true
-    },
-    userId: {
-        type: String,
-        ref: "User",
         required: true,
         index: true
     },
@@ -78,16 +70,6 @@ const cardSchema = new Schema<Card>({
     isLearning: {
         type: Boolean,
         default: true
-    },
-
-    createdAt: {
-        type: Date,
-        default: () => new Date(),
-        immutable: true
-    },
-    updatedAt: {
-        type: Date,
-        default: () => new Date()
     }
 });
 
@@ -98,17 +80,14 @@ cardSchema.index({ deckId: 1, isLearning: -1, learningStep: 1, nextReviewDate: 1
 cardSchema.index({ deckId: 1, nextReviewDate: 1, createdAt: 1 });
 cardSchema.index({ deckId: 1, nextReviewDate: 1, isLearning: -1, repetitions: 1 });
 
+cardSchema.plugin(auditableWithOwnerPlugin);
+
 cardSchema.set("toJSON", {
     transform: (doc, ret) => {
         delete ret._id;
         delete ret.__v;
         return ret;
     }
-});
-
-cardSchema.pre("save", function (next) {
-    this.updatedAt = new Date();
-    next();
 });
 
 export default model<Card>("Card", cardSchema);

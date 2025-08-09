@@ -22,11 +22,7 @@ export class SessionReviewService {
         this.cardRepository = cardRepository;
     }
 
-    public async create(sessionReviewDTO: CreateSessionReviewDTO, userId?: string): Promise<SessionReview> {
-        if (!userId) {
-            throw new Error(i18n.t("user.notFound")); //TODO Creater i18n
-        }
-
+    public async create(sessionReviewDTO: CreateSessionReviewDTO): Promise<SessionReview> {
         let deckId = sessionReviewDTO.deckId;
 
         if (!await this.deckRepository.existsDeckById(deckId)) {
@@ -39,7 +35,6 @@ export class SessionReviewService {
 
         return await this.sessionReviewRepository.createSessionReview({
             ...sessionReviewDTO,
-            userId,
             cardIds
         });
     }

@@ -1,5 +1,4 @@
 export interface SessionReviewDTO {
-    userId: string;
     deckId: string;
     cardIds: string[];
     type: SessionReviewType;

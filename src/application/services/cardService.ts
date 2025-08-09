@@ -31,15 +31,13 @@ export class CardService {
             throw new Error(i18n.t("deck.notFound"));
         }
 
-        let userId = cardDTO.userId;
         const processMediaBlocks = async (blocks: MediaReducedDTO[]) => {
-            const createdBlocks = await this.mediaService.create(blocks, files, userId);
+            const createdBlocks = await this.mediaService.create(blocks, files);
 
             return createdBlocks.map(block => block.id);
         };
 
         const card: CardDTO = {
-            userId,
             deckId: cardDTO.deckId,
             front: await processMediaBlocks(cardDTO.front),
             back: await processMediaBlocks(cardDTO.back)

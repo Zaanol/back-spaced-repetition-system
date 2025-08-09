@@ -24,7 +24,6 @@ export class SessionReviewRepository extends BaseRepository<SessionReview> imple
     public async createSessionReview(sessionReviewDTO: SessionReviewDTO): Promise<SessionReview> {
         const newSessionReview = new this.sessionReviewModel({
             id: uuidv4(),
-            userId: sessionReviewDTO.userId,
             deckId: sessionReviewDTO.deckId,
             cardIds: sessionReviewDTO.cardIds,
             type: sessionReviewDTO.type

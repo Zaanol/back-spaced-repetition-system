@@ -32,7 +32,6 @@ export class CardRepository extends BaseRepository<Card> implements ICardReposit
     public async createCard(cardDTO: CardDTO): Promise<Card> {
         const newCard = new this.cardModel({
             id: uuidv4(),
-            userId: cardDTO.userId,
             deckId: cardDTO.deckId,
             frontMediaIds: cardDTO.front,
             backMediaIds: cardDTO.back

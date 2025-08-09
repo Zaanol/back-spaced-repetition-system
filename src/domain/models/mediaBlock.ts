@@ -1,9 +1,9 @@
 import mongoose, { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import { auditableWithOwnerPlugin, AuditableWithUser } from "../../infrastructure/db/plugins/auditableWithUserPlugin";
 
-export interface MediaBlock {
+export interface MediaBlock extends AuditableWithUser {
     id: string;
-    userId: string;
     type: MediaBlockType;
     text?: string;
     data?: Buffer;
@@ -19,12 +19,6 @@ export const mediaBlockSchema = new Schema<MediaBlock>({
         type: String,
         default: uuidv4,
         unique: true,
-        required: true,
-        index: true
-    },
-    userId: {
-        type: String,
-        ref: "User",
         required: true,
         index: true
     },
@@ -70,5 +64,7 @@ export const mediaBlockSchema = new Schema<MediaBlock>({
         }
     }
 });
+
+mediaBlockSchema.plugin(auditableWithOwnerPlugin);
 
 export default model<MediaBlock>("MediaBlock", mediaBlockSchema);

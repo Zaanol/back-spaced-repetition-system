@@ -1,7 +1,8 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import { auditableWithOwnerPlugin, AuditableWithUser } from "../../infrastructure/db/plugins/auditableWithUserPlugin";
 
-export interface SessionReview extends Document {
+export interface SessionReview extends AuditableWithUser {
     id: string;
     userId: string;
     deckId: string;
@@ -29,12 +30,6 @@ const sessionReviewSchema = new Schema<SessionReview>({
         type: String,
         default: uuidv4,
         unique: true,
-        required: true,
-        index: true
-    },
-    userId: {
-        type: String,
-        ref: "User",
         required: true,
         index: true
     },
@@ -80,17 +75,10 @@ const sessionReviewSchema = new Schema<SessionReview>({
     endTime: {
         type: Date,
         default: null
-    },
-    createdAt: {
-        type: Date,
-        default: () => new Date(),
-        immutable: true
-    },
-    updatedAt: {
-        type: Date,
-        default: () => new Date()
     }
 });
+
+sessionReviewSchema.plugin(auditableWithOwnerPlugin);
 
 sessionReviewSchema.set("toJSON", {
     transform: (doc, ret) => {
@@ -98,11 +86,6 @@ sessionReviewSchema.set("toJSON", {
         delete ret.__v;
         return ret;
     }
-});
-
-sessionReviewSchema.pre("save", function (next) {
-    this.updatedAt = new Date();
-    next();
 });
 
 export default model<SessionReview>("SessionReview", sessionReviewSchema);
