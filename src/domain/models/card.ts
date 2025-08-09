@@ -12,6 +12,7 @@ export interface Card extends AuditableWithUser {
     intervalDays: number;
     nextReviewDate: Date;
     lastReviewed: Date | null;
+    totalReviews: number;
     learningStep: number;
     isLearning: boolean;
 }
@@ -60,6 +61,11 @@ const cardSchema = new Schema<Card>({
     lastReviewed: {
         type: Date,
         default: null
+    },
+    totalReviews: {
+        type: Number,
+        default: 0,
+        min: 0
     },
 
     learningStep: {

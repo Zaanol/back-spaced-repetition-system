@@ -131,6 +131,30 @@ export class CardRepository extends BaseRepository<Card> implements ICardReposit
 
         return cards.map(card => card.id);
     }
+
+    public async batchUpdateCards(updates: Array<{ id: string; updateData: Partial<Card> }>): Promise<boolean> {
+        if (updates.length === 0) return true;
+
+        const bulkOps = updates.map(({ id, updateData }) => ({
+            updateOne: {
+                filter: { id },
+                update: {
+                    $set: {
+                        ...updateData,
+                        updatedAt: new Date()
+                    }
+                }
+            }
+        }));
+
+        try {
+            const result = await this.cardModel.bulkWrite(bulkOps);
+            return result.modifiedCount === updates.length;
+        } catch (error) {
+            console.error('Batch update failed:', error);
+            return false;
+        }
+    }
 }
 
 export default new CardRepository(cardModel);

@@ -36,7 +36,7 @@ export class SessionReviewRepository extends BaseRepository<SessionReview> imple
         return await this.sessionReviewModel.findOne({ id }).exec();
     }
 
-    public async updateSessionReview(id: string, updateData: Partial<SessionReviewDTO>): Promise<SessionReview | null> {
+    public async updateSessionReview(id: string, updateData: Partial<SessionReview>): Promise<SessionReview | null> {
         return await this.sessionReviewModel.findOneAndUpdate(
             { id },
             { $set: updateData },

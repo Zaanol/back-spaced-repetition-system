@@ -10,9 +10,8 @@ export interface SessionReview extends AuditableWithUser {
     reviewedCardIds: string[];
     responses: SessionResponse[];
     type: "MIXED" | "NEW" | "REVIEW";
-    currentIndex: number;
+    reviewedCards: number;
     isActive: boolean;
-    startTime: Date;
     endTime: Date | null;
     createdAt: Date;
     updatedAt: Date;
@@ -59,7 +58,7 @@ const sessionReviewSchema = new Schema<SessionReview>({
         enum: ["MIXED", "NEW", "REVIEW"],
         default: "MIXED"
     },
-    currentIndex: {
+    reviewedCards: {
         type: Number,
         default: 0,
         min: 0
@@ -67,10 +66,6 @@ const sessionReviewSchema = new Schema<SessionReview>({
     isActive: {
         type: Boolean,
         default: true
-    },
-    startTime: {
-        type: Date,
-        default: () => new Date()
     },
     endTime: {
         type: Date,

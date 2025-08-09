@@ -10,6 +10,7 @@ export class SessionReviewController {
         this.sessionReviewService = sessionReviewService;
 
         this.create = catchAsync(this.create.bind(this));
+        this.reviewCards = catchAsync(this.reviewCards.bind(this));
         this.getById = catchAsync(this.getById.bind(this));
         this.getAll = catchAsync(this.getAll.bind(this));
     }
@@ -17,6 +18,11 @@ export class SessionReviewController {
     public async create(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const newSession = await this.sessionReviewService.create(req.body);
         res.status(201).json(newSession);
+    }
+
+    public async reviewCards(req: Request, res: Response, _next: NextFunction): Promise<void> {
+        const updatedSession = await this.sessionReviewService.reviewCards(req.body);
+        res.status(200).json(updatedSession);
     }
 
     public async getById(req: Request, res: Response, _next: NextFunction): Promise<void> {

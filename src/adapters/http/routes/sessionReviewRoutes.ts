@@ -13,6 +13,7 @@ const sessionReviewService: SessionReviewService = new SessionReviewService(sess
 const cardController = new SessionReviewController(sessionReviewService);
 
 router.post("/create", cardController.create);
+router.post("/reviewCards", cardController.reviewCards);
 router.get("/getById/:id", cardController.getById);
 router.get("/getAll", paginationMiddleware, cardController.getAll);
 
