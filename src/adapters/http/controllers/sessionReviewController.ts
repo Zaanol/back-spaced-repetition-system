@@ -15,7 +15,7 @@ export class SessionReviewController {
     }
 
     public async create(req: Request, res: Response, _next: NextFunction): Promise<void> {
-        const newSession = await this.sessionReviewService.create(req.body, req.user?.userId);
+        const newSession = await this.sessionReviewService.create(req.body, req.user?.id);
         res.status(201).json(newSession);
     }
 
@@ -35,7 +35,7 @@ export class SessionReviewController {
 
         const filters = {
             ...req.filters,
-            userId: req.user?.userId
+            userId: req.user?.id
         };
 
         const reviews = await this.sessionReviewService.getAll(filters, pagination?.page, pagination?.limit);

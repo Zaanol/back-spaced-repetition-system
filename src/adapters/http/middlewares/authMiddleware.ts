@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../../../infrastructure/security/jwt";
 import { AuthUser } from "../../../types/express";
+import { setUserContext } from "../../../infrastructure/security/context/auth";
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
@@ -15,10 +16,15 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
         const token = authHeader.split(" ")[1];
         
         verifyToken(token).then(
-            (decoded) =>  {
-                (req as any).user = decoded as AuthUser
+            (decoded) => {
+                const authUser: AuthUser = {
+                  id: decoded.userId
+                };
 
-                next();
+                setUserContext(authUser, () => {
+                    (req as any).user = authUser;
+                    next();
+                });
             },
             () => {
                 return res.status(401).json({ error: "Unauthorized" })

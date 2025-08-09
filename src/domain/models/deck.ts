@@ -1,9 +1,9 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import { auditableWithOwnerPlugin, AuditableWithUser } from "../../infrastructure/db/plugins/auditableWithUserPlugin";
 
-export interface Deck extends Document {
+export interface Deck extends AuditableWithUser {
     id: string;
-    userId: string;
     name: string;
     description: string;
     createdAt: Date;
@@ -18,25 +18,11 @@ const deckSchema = new Schema<Deck>({
         required: true,
         index: true
     },
-    userId: {
-        type: String,
-        ref: "User",
-        required: true,
-        index: true
-    },
     name: { type: String, required: true },
-    description: { type: String },
-
-    createdAt: {
-        type: Date,
-        default: () => new Date(),
-        immutable: true
-    },
-    updatedAt: {
-        type: Date,
-        default: () => new Date()
-    }
+    description: { type: String }
 });
+
+deckSchema.plugin(auditableWithOwnerPlugin)
 
 deckSchema.set("toJSON", {
     transform: (_doc, ret) => {
@@ -44,11 +30,6 @@ deckSchema.set("toJSON", {
         delete ret.__v;
         return ret;
     }
-});
-
-deckSchema.pre("save", function (next) {
-    this.updatedAt = new Date();
-    next();
 });
 
 export default model<Deck>("Deck", deckSchema);

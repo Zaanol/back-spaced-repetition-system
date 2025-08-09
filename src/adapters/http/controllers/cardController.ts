@@ -27,7 +27,7 @@ export class CardController {
             return acc;
         }, {} as { [key: string]: Express.Multer.File[] });
 
-        cardDTO.userId = req.user?.userId;
+        cardDTO.userId = req.user?.id;
 
         const newCard = await this.cardService.create(cardDTO, files);
         res.status(201).json(newCard);
