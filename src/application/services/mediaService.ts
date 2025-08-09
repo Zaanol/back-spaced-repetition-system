@@ -26,14 +26,21 @@ export class MediaService {
         this.mediaRepository = mediaRepository;
     }
 
-    public async create(blocks: MediaReducedDTO[], files: { [fieldname: string]: Express.Multer.File[] }): Promise<MediaBlock[]> {
+    public async create(blocks: MediaReducedDTO[],
+                        files: { [fieldname: string]: Express.Multer.File[] },
+                        userId: string
+    ): Promise<MediaBlock[]> {
         return Promise.all(blocks.map(async (block) => {
-            return this.createBlock(block, files);
+            return this.createBlock(block, files, userId);
         }));
     }
 
-    public async createBlock(block: MediaReducedDTO, files: { [fieldname: string]: Express.Multer.File[] }): Promise<MediaBlock> {
+    public async createBlock(block: MediaReducedDTO,
+                             files: { [fieldname: string]: Express.Multer.File[] },
+                             userId: string
+    ): Promise<MediaBlock> {
         const mediaBlockData: MediaDTO = {
+            userId,
             type: block.type,
             contentType: block.type === "text" ? undefined : block.contentType,
         };

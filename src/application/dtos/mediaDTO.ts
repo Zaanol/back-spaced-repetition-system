@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { MediaBlockType } from "../../domain/models/mediaBlock";
 
 export interface MediaDTO {
+    userId: string;
     type: MediaBlockType;
     text?: string;
     fileFieldName?: string;

@@ -1,30 +1,46 @@
 import { SessionReviewRepository } from "../../infrastructure/repositories/sessionReviewRepository";
-import {CreateSessionReviewDT, SessionReviewDTO} from "../dtos/sessionReviewDTO";
+import { CreateSessionReviewDTO, SessionReviewDTO } from "../dtos/sessionReviewDTO";
 import { SessionReview } from "../../domain/models/sessionReview";
 import i18n from "../../config/i18n";
 import { FilterQuery } from "mongoose";
 import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
-import {PaginatedResult} from "../../infrastructure/repositories/baseRepository";
+import { PaginatedResult } from "../../infrastructure/repositories/baseRepository";
+import { CardRepository } from "../../infrastructure/repositories/cardRepository";
 
 //TODO Implement translations
 export class SessionReviewService {
     private sessionReviewRepository: SessionReviewRepository;
     private deckRepository: DeckRepository;
+    private cardRepository: CardRepository;
 
-    constructor(sessionReviewRepository: SessionReviewRepository, deckRepository: DeckRepository) {
+    constructor(sessionReviewRepository: SessionReviewRepository,
+                deckRepository: DeckRepository,
+                cardRepository: CardRepository
+    ) {
         this.sessionReviewRepository = sessionReviewRepository;
         this.deckRepository = deckRepository;
+        this.cardRepository = cardRepository;
     }
 
-    public async create(sessionReviewDTO: CreateSessionReviewDT, userId: string): Promise<SessionReview> {
-        if (!await this.deckRepository.existsDeckById(sessionReviewDTO.deckId)) {
+    public async create(sessionReviewDTO: CreateSessionReviewDTO, userId?: string): Promise<SessionReview> {
+        if (!userId) {
+            throw new Error(i18n.t("user.notFound")); //TODO Creater i18n
+        }
+
+        let deckId = sessionReviewDTO.deckId;
+
+        if (!await this.deckRepository.existsDeckById(deckId)) {
             throw new Error(i18n.t("deck.notFound"));
         }
+
+        let cardIds: string[] = await this.cardRepository.getCardsIdsForReview(deckId, {
+            sessionType: sessionReviewDTO.type
+        });
 
         return await this.sessionReviewRepository.createSessionReview({
             ...sessionReviewDTO,
             userId,
-            cardIds: []
+            cardIds
         });
     }
 
@@ -51,6 +67,7 @@ export class SessionReviewService {
         if (!id) {
             throw new Error(i18n.t("id.nonNull"));
         }
+
         return await this.sessionReviewRepository.updateSessionReview(id, updateData);
     }
 
@@ -58,6 +75,7 @@ export class SessionReviewService {
         if (!id) {
             throw new Error(i18n.t("id.nonNull"));
         }
+
         return await this.sessionReviewRepository.deleteSessionReview(id);
     }
 }

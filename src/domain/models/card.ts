@@ -63,8 +63,7 @@ const cardSchema = new Schema<Card>({
         min: 1
     },
     nextReviewDate: {
-        type: Date,
-        default: () => new Date()
+        type: Date
     },
     lastReviewed: {
         type: Date,
@@ -91,6 +90,13 @@ const cardSchema = new Schema<Card>({
         default: () => new Date()
     }
 });
+
+cardSchema.index({ deckId: 1, isLearning: -1, repetitions: 1, nextReviewDate: 1 });
+cardSchema.index({ deckId: 1, repetitions: 1, isLearning: -1 });
+cardSchema.index({ deckId: 1, isLearning: 1, repetitions: 1, nextReviewDate: 1 });
+cardSchema.index({ deckId: 1, isLearning: -1, learningStep: 1, nextReviewDate: 1 });
+cardSchema.index({ deckId: 1, nextReviewDate: 1, createdAt: 1 });
+cardSchema.index({ deckId: 1, nextReviewDate: 1, isLearning: -1, repetitions: 1 });
 
 cardSchema.set("toJSON", {
     transform: (doc, ret) => {

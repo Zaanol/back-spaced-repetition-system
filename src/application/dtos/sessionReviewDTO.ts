@@ -5,7 +5,7 @@ export interface SessionReviewDTO {
     type: SessionReviewType;
 }
 
-export interface CreateSessionReviewDT {
+export interface CreateSessionReviewDTO {
     deckId: string;
     type: SessionReviewType;
 }
