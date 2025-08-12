@@ -6,6 +6,7 @@ import cardRepository from "../../../infrastructure/repositories/cardRepository"
 import deckRepository from "../../../infrastructure/repositories/deckRepository";
 import mediaRepository from "../../../infrastructure/repositories/mediaRepository";
 import { paginationMiddleware } from "../middlewares/paginationMiddleware";
+import { ensureAsyncContext } from "../middlewares/uploadMiddleware";
 
 const router = express.Router();
 
@@ -14,10 +15,10 @@ const cardService: CardService = new CardService(cardRepository, deckRepository,
 
 const cardController = new CardController(cardService);
 
-router.post("/create", cardController.uploadMiddleware, cardController.create);
+router.post("/create", ensureAsyncContext(cardController.uploadMiddleware), cardController.create);
 router.get("/getById/:id", cardController.getById);
 router.get("/getAll", paginationMiddleware, cardController.getAll);
-router.patch("/update/:id", cardController.update);
+router.patch("/update/:id", ensureAsyncContext(cardController.uploadMiddleware), cardController.update);
 router.delete("/delete/:id", cardController.delete);
 
 export default router;

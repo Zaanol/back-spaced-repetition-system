@@ -66,9 +66,12 @@ export class CardService {
     }
 
     public async update(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {
-        if (!id) {
-            throw new Error(i18n.t("id.nonNull"));
+        if (!await this.cardRepository.existsDeckById(id)) {
+            throw new Error(i18n.t("card.notFound")); //TODO create i18n
         }
+
+        //TODO Handle the files as create Card
+
         return await this.cardRepository.updateCard(id, updateData);
     }
 
@@ -76,6 +79,7 @@ export class CardService {
         if (!id) {
             throw new Error(i18n.t("id.nonNull"));
         }
+
         return await this.cardRepository.deleteCard(id);
     }
 }

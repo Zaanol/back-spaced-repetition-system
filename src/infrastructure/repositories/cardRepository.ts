@@ -44,6 +44,11 @@ export class CardRepository extends BaseRepository<Card> implements ICardReposit
         return await this.cardModel.findOne({ id }).exec();
     }
 
+    public async existsDeckById(id: string): Promise<boolean> {
+        const count = await this.cardModel.countDocuments({ id: id }).exec();
+        return count > 0;
+    }
+
     public async updateCard(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {
         return await this.cardModel.findOneAndUpdate(
             { id },
