@@ -5,7 +5,7 @@ import { validateCard } from "../validators/cardValidator";
 import i18n from "../../config/i18n";
 import { FilterQuery } from "mongoose";
 import { DeckRepository } from "../../infrastructure/repositories/deckRepository";
-import { MediaService } from "./mediaService";
+import { MediaFilesType, MediaService } from "./mediaService";
 import { MediaReducedDTO } from "../dtos/mediaDTO";
 import { PaginatedResult } from "../../infrastructure/repositories/baseRepository";
 
@@ -21,7 +21,7 @@ export class CardService {
         this.mediaService = mediaService;
     }
 
-    public async create(cardDTO: CardWithMediaBlocksDTO, files: { [fieldname: string]: Express.Multer.File[] }): Promise<Card> {
+    public async create(cardDTO: CardWithMediaBlocksDTO, files: MediaFilesType): Promise<Card> {
         const validationError = validateCard(cardDTO);
         if (validationError) {
             throw new Error(i18n.t(validationError));
@@ -31,19 +31,13 @@ export class CardService {
             throw new Error(i18n.t("deck.notFound"));
         }
 
-        const processMediaBlocks = async (blocks: MediaReducedDTO[]) => {
-            const createdBlocks = await this.mediaService.create(blocks, files);
-
-            return createdBlocks.map(block => block.id);
-        };
-
-        const card: CardDTO = {
+        const createCardDTO: CardDTO = {
             deckId: cardDTO.deckId,
-            front: await processMediaBlocks(cardDTO.front),
-            back: await processMediaBlocks(cardDTO.back)
+            front: await this.processMediaBlocks(cardDTO.front, files),
+            back: await this.processMediaBlocks(cardDTO.back, files)
         };
 
-        return await this.cardRepository.createCard(card);
+        return await this.cardRepository.createCard(createCardDTO);
     }
 
     public async getById(id: string): Promise<Card | null> {
@@ -65,14 +59,27 @@ export class CardService {
         );
     }
 
-    public async update(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {
+    public async update(id: string, cardDTO: CardWithMediaBlocksDTO, files: MediaFilesType): Promise<Card | null>  {
         if (!await this.cardRepository.existsDeckById(id)) {
             throw new Error(i18n.t("card.notFound")); //TODO create i18n
         }
 
-        //TODO Handle the files as create Card
+        const validationError = validateCard(cardDTO);
+        if (validationError) {
+            throw new Error(i18n.t(validationError));
+        }
 
-        return await this.cardRepository.updateCard(id, updateData);
+        if (!await this.deckRepository.existsDeckById(cardDTO.deckId)) {
+            throw new Error(i18n.t("deck.notFound"));
+        }
+
+        const updateCardDTO: CardDTO = {
+            deckId: cardDTO.deckId,
+            front: await this.processMediaBlocks(cardDTO.front, files),
+            back: await this.processMediaBlocks(cardDTO.back, files)
+        };
+
+        return await this.cardRepository.updateCard(id, updateCardDTO);
     }
 
     public async delete(id: string): Promise<boolean> {
@@ -81,5 +88,11 @@ export class CardService {
         }
 
         return await this.cardRepository.deleteCard(id);
+    }
+
+    public async processMediaBlocks(blocks: MediaReducedDTO[], files: MediaFilesType) {
+        const createdBlocks = await this.mediaService.create(blocks, files);
+
+        return createdBlocks.map(block => block.id);
     }
 }

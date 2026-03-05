@@ -3,6 +3,7 @@ import { CardService } from "../../../application/services/cardService";
 import { catchAsync } from "./utils/utilsController";
 import i18n from "../../../config/i18n";
 import multer from "multer";
+import { MediaFilesType } from "../../../application/services/mediaService";
 
 export class CardController {
     private cardService: CardService;
@@ -21,11 +22,7 @@ export class CardController {
 
     public async create(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const cardDTO = JSON.parse(req.body.card);
-        const files = (req.files as Express.Multer.File[]).reduce((acc, file) => {
-            if (!acc[file.fieldname]) acc[file.fieldname] = [];
-            acc[file.fieldname].push(file);
-            return acc;
-        }, {} as { [key: string]: Express.Multer.File[] });
+        const files = this.getFilesFromRequest(req);
 
         const newCard = await this.cardService.create(cardDTO, files);
         res.status(201).json(newCard);
@@ -50,13 +47,24 @@ export class CardController {
     }
 
     public async update(req: Request, res: Response, _next: NextFunction): Promise<void> {
-        const updatedCard = await this.cardService.update(req.params.id, req.body);
+        const cardDTO = JSON.parse(req.body.card);
+        const files = this.getFilesFromRequest(req);
+
+        const updatedCard = await this.cardService.update(req.params.id, cardDTO, files);
         res.json(updatedCard);
     }
 
     public async delete(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const success = await this.cardService.delete(req.params.id);
         res.status(success ? 204 : 404).send();
+    }
+
+    private getFilesFromRequest(req: Request): MediaFilesType {
+        return (req.files as Express.Multer.File[]).reduce((acc, file) => {
+            if (!acc[file.fieldname]) acc[file.fieldname] = [];
+            acc[file.fieldname].push(file);
+            return acc;
+        }, {} as { [key: string]: Express.Multer.File[] });
     }
 
     get uploadMiddleware() {

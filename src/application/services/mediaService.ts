@@ -19,6 +19,8 @@ const CONTENT_HEADERS = {
     OCTET_STREAM: "application/octet-stream",
 };
 
+export type MediaFilesType = { [fieldname: string]: Express.Multer.File[] };
+
 export class MediaService {
     private mediaRepository: MediaRepository;
 
@@ -27,7 +29,7 @@ export class MediaService {
     }
 
     public async create(blocks: MediaReducedDTO[],
-                        files: { [fieldname: string]: Express.Multer.File[] }
+                        files: MediaFilesType
     ): Promise<MediaBlock[]> {
         return Promise.all(blocks.map(async (block) => {
             return this.createBlock(block, files);
@@ -35,7 +37,7 @@ export class MediaService {
     }
 
     public async createBlock(block: MediaReducedDTO,
-                             files: { [fieldname: string]: Express.Multer.File[] }
+                             files: MediaFilesType
     ): Promise<MediaBlock> {
         const mediaBlockData: MediaDTO = {
             type: block.type,

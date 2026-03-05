@@ -49,12 +49,20 @@ export class CardRepository extends BaseRepository<Card> implements ICardReposit
         return count > 0;
     }
 
-    public async updateCard(id: string, updateData: Partial<CardDTO>): Promise<Card | null> {
-        return await this.cardModel.findOneAndUpdate(
-            { id },
-            { $set: updateData },
-            { new: true }
-        ).exec();
+    public async updateCard(id: string, cardDTO: CardDTO): Promise<Card | null> {
+        return this.cardModel
+            .findOneAndUpdate(
+                { id },
+                {
+                    $set: {
+                        deckId: cardDTO.deckId,
+                        frontMediaIds: cardDTO.front,
+                        backMediaIds: cardDTO.back,
+                    },
+                },
+                { new: true },
+            )
+            .exec();
     }
 
     public async deleteCard(id: string): Promise<boolean> {
