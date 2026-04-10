@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from '../../../application/services/userService';
+import { getContextUserId } from "../../../infrastructure/security/context/auth";
 
 export class UserController {
     private userService: UserService;
@@ -34,9 +35,9 @@ export class UserController {
 
     public async getUser(req: Request, res: Response, next): Promise<void> {
         try {
-            const id = (req as any).user.id;
+            const userId = getContextUserId();
 
-            const user = await this.userService.getById(id);
+            const user = await this.userService.getById(userId);
 
             if (!user) {
                 res.status(404).json({ error: 'User not found' });
