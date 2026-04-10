@@ -35,6 +35,7 @@ export class UserRepository implements IUserRepository {
     public async findUserById(id: string): Promise<User | null> {
         return await this.userModel
             .findOne({ id: id })
+            .setOptions({ skipUserFilter: true })
             .exec();
     }
 }

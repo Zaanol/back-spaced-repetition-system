@@ -31,6 +31,10 @@ export function auditableWithOwnerPlugin(schema: Schema) {
     });
 
     schema.pre<Query<any, AuditableWithUser>>(/^find/, function (next) {
+        if (this.getOptions()?.skipUserFilter) {
+            return next();
+        }
+
         const userId = getContextUserId();
 
         this.where({ userId: userId });
