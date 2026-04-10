@@ -5,13 +5,36 @@ import { applyMiddlewares, applyErrorMiddleware } from '../adapters/http/middlew
 import { applyRoutes } from '../adapters/http/routes';
 
 const app = express();
+let dbConnectionPromise: Promise<void> | null = null;
 
-connectDB().then(() => {
-    applyMiddlewares(app);
-    applyRoutes(app);
-    applyErrorMiddleware(app);
+applyMiddlewares(app);
+applyRoutes(app);
+applyErrorMiddleware(app);
 
-    app.listen(config.port, () => {
-        console.log(`Server is running on port ${config.port}`);
-    });
+const ensureDbConnected = async (): Promise<void> => {
+    if (!dbConnectionPromise) {
+        dbConnectionPromise = connectDB();
+    }
+
+    await dbConnectionPromise;
+};
+
+void ensureDbConnected().catch((error) => {
+    console.error('Error connecting to MongoDB:', error?.message ?? error);
 });
+
+if (require.main === module) {
+    ensureDbConnected()
+        .then(() => {
+            app.listen(config.port, () => {
+                console.log(`Server is running on port ${config.port}`);
+            });
+        })
+        .catch((error) => {
+            console.error('Failed to start server:', error?.message ?? error);
+            process.exit(1);
+        });
+}
+
+export { app, ensureDbConnected };
+export default app;

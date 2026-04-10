@@ -36,7 +36,7 @@ export class UserController {
     public async getUser(req: Request, res: Response, next): Promise<void> {
         try {
             const userId = getContextUserId();
-            console.log(userId);
+
             const user = await this.userService.getById(userId);
 
             if (!user) {
