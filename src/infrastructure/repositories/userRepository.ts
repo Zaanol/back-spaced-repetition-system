@@ -1,4 +1,5 @@
 import { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import { User } from '../../domain/models/user';
 import userModel from '../../domain/models/user';
 import { UserDTO } from '../../application/dtos/userDTO';
@@ -33,13 +34,19 @@ export class UserRepository implements IUserRepository {
     }
 
     public async findUserById(id: string): Promise<User | null> {
+        const filters: Array<Record<string, unknown>> = [
+            { id: id },
+            { uuid: id }
+        ];
+
+        console.error(id);
+
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            filters.push({ _id: id });
+        }
+
         return await this.userModel
-            .findOne({
-                $or: [
-                    { id: id },
-                    { uuid: id }
-                ]
-            })
+            .findOne({ $or: filters })
             .setOptions({ skipUserFilter: true })
             .exec();
     }
