@@ -19,7 +19,7 @@ export class UserRepository implements IUserRepository {
 
     public async createUser(userDTO: UserDTO): Promise<User> {
         const newUser = new this.userModel({
-            uuid: uuidv4(),
+            id: uuidv4(),
             username: userDTO.username,
             email: userDTO.email,
             password: userDTO.password
@@ -34,7 +34,12 @@ export class UserRepository implements IUserRepository {
 
     public async findUserById(id: string): Promise<User | null> {
         return await this.userModel
-            .findOne({ id: id })
+            .findOne({
+                $or: [
+                    { id: id },
+                    { uuid: id }
+                ]
+            })
             .setOptions({ skipUserFilter: true })
             .exec();
     }
