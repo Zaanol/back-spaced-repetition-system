@@ -7,7 +7,7 @@ import sessionReviewRoutes from "./sessionReviewRoutes";
 
 export const applyRoutes = (app: express.Application) => {
     app.get("/health", (_req, res) => {
-        return res.status(200).json({ status: "ok" });
+        res.status(200).json({ status: "ok" });
     });
 
     app.use("/users", userRoutes);
