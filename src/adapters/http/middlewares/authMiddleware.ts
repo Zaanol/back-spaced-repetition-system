@@ -6,7 +6,7 @@ import { setUserContext } from "../../../infrastructure/security/context/auth";
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
-    const publicRoutes = ["/users/register", "/users/login"];
+    const publicRoutes = ["/users/register", "/users/login", "/health"];
 
     if (publicRoutes.includes(req.path)) {
         return next();
